@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mini AI Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="chatbox">
+        <div id="chat-log" class="chat-log"></div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Ask me anything..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const inputField = document.getElementById("user-input");
+            const chatLog = document.getElementById("chat-log");
+            const userMessage = inputField.value.trim();
+            if (!userMessage) return;
+
+            chatLog.innerHTML += `<div class='user-msg'>🧑‍💻: ${userMessage}</div>`;
+            inputField.value = "";
+
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userMessage })
+            });
+
+            const data = await response.json();
+            chatLog.innerHTML += `<div class='bot-msg'>🤖: ${data.reply}</div>`;
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+    </script>
+</body>
+</html>
